@@ -45,7 +45,6 @@ class nyseCrawler:
     #       response : response from site or None if timed out
     def getSinglePage(self, currentPageNumber):
         response = self.sendHTTPRequestForTickerSymbols(currentPageNumber)
-        print("SinglePage res: {0}".format(response))
 
         # use exponential backoff if bad request received
         if response == None or response.ok == False:
@@ -61,6 +60,7 @@ class nyseCrawler:
                 n += 1
                 currWaitTime = math.pow(2,n)+random.random()
 
+        print("Retrieving page: {0}. Status code: {1}".format(currentPageNumber,response.status_code))
         return response
 
     # Processes the response received and inputs data into dictionary in case it is needed later
@@ -96,7 +96,6 @@ class nyseCrawler:
 
         # Request will generate an '[]' as a response if there is no more data
         while response != None and response.ok and response.text != EMPTY_RESPONSE:
-            print("Retrieving page: {0}. Status code: {1}".format(currentPageNumber,response.status_code))
             self.getSymbolAndName(response)
             currentPageNumber += 1
             response = self.getSinglePage(currentPageNumber)
